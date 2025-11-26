@@ -1,5 +1,5 @@
 export interface IPayload {
-  username: string;
+  id: number;
 }
 
 export interface IQuery {

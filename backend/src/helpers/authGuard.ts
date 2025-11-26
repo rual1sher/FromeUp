@@ -4,14 +4,11 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import token from './token';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const accessToken = request.headers.authorization?.split(' ')[1];
 
@@ -21,7 +18,7 @@ export class AuthGuard implements CanActivate {
 
     const payload = token.verifyAccessToken(accessToken);
 
-    request.username = payload.username;
+    request.id = payload.id;
 
     return true;
   }

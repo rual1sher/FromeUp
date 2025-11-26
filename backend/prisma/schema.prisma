@@ -3,110 +3,51 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String             @id @default(cuid())
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  status            Boolean
-  username          String
-  lastName          String? // Nullable, если возможно пустое значение
-  firstName         String? // Nullable, если возможно пустое значение
-  password          String
-  token             String?
-  avatar            String?
-  content           Content[]
-  likes             Like[]
-  comments          Comment[]
-  userSubscriptions UserSubscription[] @relation("UserSubscriptionSubscriber") // Подписчики
-  subscribedTo      UserSubscription[] @relation("UserSubscriptionSubscribedTo") // Кому подписан
-  Views             Views[]
-}
-
-model Content {
-  id           String         @id @default(cuid())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  status       Boolean
-  title        String
-  desc         String?
-  file         String         @unique
-  userId       String
-  user         User           @relation(fields: [userId], references: [id])
-  comments     Comment[]
-  likes        Like[]
-  filesContent FilesContent[]
-  Views        Views[]
-}
-
-model Views {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  name      String
+  password  String
+  avatar    String?
+  banner    String?
+  status    Boolean  @default(true)
+  token     String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  status    Boolean
-  contentId String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  content   Content  @relation(fields: [contentId], references: [id])
+
+  GroupMember GroupMember[]
+  Message     Message[]
 }
 
-model Like {
-  id        String   @id @default(cuid())
+model Group {
+  id        Int           @id @default(autoincrement())
+  name      String?
+  members   GroupMember[]
+  messages  Message[]
+  createdAt DateTime      @default(now())
+}
+
+model GroupMember {
+  id        Int      @id @default(autoincrement())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  status    Boolean
-  userId    String
-  contentId String
-  isLike    Boolean
-  user      User     @relation(fields: [userId], references: [id])
-  content   Content  @relation(fields: [contentId], references: [id])
 }
 
-model Files {
-  id           String         @id @default(cuid())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  status       Boolean
-  images       String
-  size         Int // Тип размера лучше изменить на Int
-  type         String
-  filesContent FilesContent[]
-}
+model Message {
+  id      Int     @id @default(autoincrement())
+  content String
+  file    String?
 
-model FilesContent {
-  filesId     String
-  contentFile String
-  files       Files   @relation(fields: [filesId], references: [id])
-  content     Content @relation(fields: [contentFile], references: [file])
+  sender   User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId Int
 
-  @@id([filesId, contentFile])
-}
+  group   Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
 
-model Comment {
-  id            String    @id @default(cuid())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  status        Boolean
-  userId        String
-  contentId     String
-  message       String
-  parentId      String?
-  user          User      @relation(fields: [userId], references: [id])
-  content       Content   @relation(fields: [contentId], references: [id])
-  parentComment Comment?  @relation("ParentComment", fields: [parentId], references: [id])
-  replies       Comment[] @relation("ParentComment")
-}
-
-model UserSubscription {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  status         Boolean
-  subscriberId   String
-  subscribedToId String
-  subscriber     User     @relation("UserSubscriptionSubscriber", fields: [subscriberId], references: [id])
-  subscribedTo   User     @relation("UserSubscriptionSubscribedTo", fields: [subscribedToId], references: [id])
+  createdAt DateTime @default(now())
 }

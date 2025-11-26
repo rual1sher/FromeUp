@@ -2,14 +2,10 @@ import { Pagination } from './pagination';
 
 export class ApiResponse {
   data: any;
-  status: number;
-  pagination?: Pagination;
-  date: Date;
+  meta?: Pagination;
 
-  constructor(data: any, status?: number, pagination?: Pagination) {
+  constructor(data: any, pagination?: Pagination) {
     this.data = data;
-    this.status = status || 200;
-    this.pagination = pagination || null;
-    this.date = new Date();
+    this.meta = pagination || null;
   }
 }
