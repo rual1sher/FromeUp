@@ -1,19 +1,15 @@
 export class Pagination {
   page: number;
-  limit: number;
-  totalItems: number;
-  totalPages: number;
-  offset: number;
+  take: number;
+  skip: number;
+  count: number;
+  pages: number;
 
-  constructor(
-    totalItems: number,
-    page?: number | string,
-    limit?: number | string,
-  ) {
+  constructor(count: number, page?: number | string, take?: number | string) {
     this.page = Number(page) || 1;
-    this.limit = Number(limit) || 15;
-    this.totalItems = totalItems;
-    this.offset = (this.page - 1) * this.limit;
-    this.totalPages = Math.ceil(this.totalItems / this.limit);
+    this.take = Number(take) || 15;
+    this.skip = (this.page - 1) * this.take;
+    this.count = count;
+    this.pages = Math.ceil(this.count / this.take);
   }
 }

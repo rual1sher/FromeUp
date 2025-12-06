@@ -25,15 +25,21 @@ export class AuthController {
     return this.userService.refresh(body);
   }
 
-  @Post('logout')
-  @UseGuards(AuthGuard)
-  logout(@Req() req: IPayload) {
-    return this.userService.logout(req);
-  }
-
   @Get('me')
   @UseGuards(AuthGuard)
   me(@Req() req: IPayload) {
     return this.userService.me(req);
+  }
+
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  logout(@Body() { token }: Verify, @Req() req: IPayload) {
+    return this.userService.logout(req, token);
+  }
+
+  @Post('logout/all')
+  @UseGuards(AuthGuard)
+  logoutAll(@Req() req: IPayload) {
+    return this.userService.logoutAll(req);
   }
 }

@@ -14,19 +14,38 @@ model User {
   avatar    String?
   banner    String?
   status    Boolean  @default(true)
-  token     String?
   createdAt DateTime @default(now())
 
   GroupMember GroupMember[]
   Message     Message[]
+  Tokens      Tokens[]
+  Group       Group[]
+}
+
+model Tokens {
+  id     Int    @id @default(autoincrement())
+  token  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
 }
 
 model Group {
-  id        Int           @id @default(autoincrement())
-  name      String?
-  members   GroupMember[]
-  messages  Message[]
-  createdAt DateTime      @default(now())
+  id Int @id @default(autoincrement())
+
+  nickname String @unique
+  name     String
+  authorId Int
+
+  desc   String?
+  image  String?
+  banner String?
+
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  members  GroupMember[]
+  messages Message[]
 }
 
 model GroupMember {
@@ -42,12 +61,13 @@ model Message {
   id      Int     @id @default(autoincrement())
   content String
   file    String?
+  status  Boolean @default(true)
 
   sender   User @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId Int
 
-  group   Group? @relation(fields: [groupId], references: [id])
-  groupId Int?
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId Int
 
   createdAt DateTime @default(now())
 }

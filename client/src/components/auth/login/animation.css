@@ -1,0 +1,14 @@
+.banner-login {
+  animation: blur 1s 1 ease-in;
+}
+
+@keyframes blur {
+  0% {
+    filter: blur(40px);
+    transform: scale(1.15);
+  }
+  100% {
+    filter: blur(0px);
+    transform: scale(1);
+  }
+}
