@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import "./animation.css";
+import "./login-animation.css";
 import { Fade, Slide } from "react-awesome-reveal";
 import animechan from "/Без названия (1).jpeg";
 
-export function Login() {
+export function LoginPage() {
   return (
     <div className="w-full h-screen flex items-center bg-white dark:bg-neutral-950">
       {/* LEFT SIDE */}
@@ -13,7 +13,7 @@ export function Login() {
         <div className="absolute top-1/2 -translate-y-1/2 justify-center items-center px-10 hidden md:flex">
           <Fade
             delay={1200}
-            className="bg-black/15 dark:bg-black/10 backdrop-blur-xs px-6 py-4 rounded-2xl text-md font-semibold text-white drop-shadow-xl max-w-md text-center shadow-[0_0_20px_rgba(0,0,0,0.25)]"
+            className="bg-[var(--surface)] backdrop-blur-xs px-6 py-4 rounded-2xl text-md font-semibold text-white drop-shadow-xl max-w-md text-center shadow-[0_0_20px_rgba(0,0,0,0.25)]"
           >
             <span>
               <p className="text-xl pb-5">Рады видеть тебя снова!</p>
