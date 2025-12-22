@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LucidePanelBottomClose } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slide } from "react-awesome-reveal";
+import { useSearchParams } from "react-router";
 
 type Props = {
   messages: Message[];
@@ -14,6 +15,7 @@ type Props = {
 export function MessageList({ messages, currentUserId }: Props) {
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [isDown, setIsDown] = useState(true);
+  const [searchParams] = useSearchParams();
 
   const handleScroll = () => {
     const el = chatRef.current;
@@ -33,7 +35,7 @@ export function MessageList({ messages, currentUserId }: Props) {
     el.addEventListener("scroll", handleScroll);
 
     return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [searchParams.get("chat")]);
 
   useEffect(() => {
     const el = chatRef.current;

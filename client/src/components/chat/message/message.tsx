@@ -1,59 +1,38 @@
-import type { Message, User } from "@/types/type";
+import type { Message } from "@/types/type";
 
 type Props = {
   message: Message;
-  author?: User | null;
-  isOwn?: boolean; // если сообщение автора — для стилизации
+  isOwn?: boolean;
 };
 
 export function MessageItem({ message, isOwn = false }: Props) {
-  const date = new Date(message.createdAt);
-  const time = date.toLocaleString();
+  const date = new Date(message.createdAt).toLocaleString();
 
   return (
-    <div
-      className={`flex gap-3 items-start ${
-        isOwn ? "justify-end" : "justify-start"
-      }`}
-    >
-      {/* Avatar */}
+    <div className={`flex gap-3 ${isOwn ? "justify-end" : "justify-start"}`}>
       {!isOwn && (
         <img
-          src={message.author?.avatar || "/anime-default-pfp-5.jpg"}
-          alt={message.author?.name || "user"}
-          className="w-9 h-9 rounded-full object-cover"
+          src={message.author?.avatar || "anime-default-pfp-5.jpg"}
+          className="w-9 h-9 rounded-full"
         />
       )}
 
-      {/* Bubble */}
-      <div className={`max-w-[70%] ${isOwn ? "text-right" : "text-left"}`}>
+      <div className={`max-w-[70%]`}>
         <div
-          className={`${
-            isOwn
-              ? "bg-blue-800 text-white"
-              : "bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-gray-100"
-          } px-4 py-2 rounded-xl shadow-sm`}
+          className={`px-4 py-2 rounded-xl ${
+            isOwn ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-neutral-800"
+          }`}
         >
-          {/* name + text */}
-          <div className="text-xs mb-1 text-gray-400">
-            {message.author?.name ?? "Неизвестный"}
-          </div>
-
-          <div className="whitespace-pre-wrap wrap-break-word">
-            {message.text}
-          </div>
+          <div className="text-sm">{message.text}</div>
         </div>
 
-        {/* meta: time */}
-        <div className="text-[11px] text-muted-foreground mt-1">{time}</div>
+        <div className="text-[11px] opacity-60 mt-1">{date}</div>
       </div>
 
-      {/* Avatar on right if own */}
       {isOwn && (
         <img
           src={message.author?.avatar || "anime-default-pfp-5.jpg"}
-          alt={message.author?.name || "user"}
-          className="w-9 h-9 rounded-full object-cover"
+          className="w-9 h-9 rounded-full"
         />
       )}
     </div>

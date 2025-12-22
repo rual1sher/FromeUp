@@ -230,3 +230,66 @@ export const messageData = [
     author: userData[0],
   },
 ];
+
+export const GroupData = [
+  {
+    id: 1,
+    nickname: "frontend_team",
+    name: "Frontend Developers",
+    authorId: 1,
+    desc: "Команда которая пилит UI и дизайн систем.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s",
+    banner: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    status: true,
+    createdAt: "2025-01-12T10:00:00.000Z",
+  },
+  {
+    id: 2,
+    nickname: "backend_core",
+    name: "Backend Core",
+    authorId: 2,
+    desc: "Основная команда API, базы данных и интеграций.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s",
+    banner: "https://images.unsplash.com/photo-1555949963-aa79dcee981c",
+    status: true,
+    createdAt: "2025-01-13T11:20:00.000Z",
+  },
+  {
+    id: 3,
+    nickname: "design_hub",
+    name: "Design Hub",
+    authorId: 3,
+    desc: "UI/UX дизайн, баннеры, визуальные материалы.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s",
+    banner: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    status: true,
+    createdAt: "2025-01-14T09:10:00.000Z",
+  },
+  {
+    id: 4,
+    nickname: "qa_team",
+    name: "QA / Testers",
+    authorId: 4,
+    desc: "Отвечают за стабильность и качество продукта.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s",
+    banner: "https://images.unsplash.com/photo-1581092334428-1e7e3b1c89f2",
+    status: true,
+    createdAt: "2025-01-16T12:45:00.000Z",
+  },
+  {
+    id: 5,
+    nickname: "management",
+    name: "Management",
+    authorId: 1,
+    desc: "Руководство, планирование, стратегии.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s",
+    banner: "https://images.unsplash.com/photo-1521791136064-7986c2920216",
+    status: true,
+    createdAt: "2025-01-17T15:30:00.000Z",
+  },
+];

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { env } from "../config/env";
 import { toast } from "sonner";
-import { refresh } from "../service/auth-servce";
+import { refresh } from "../service/auth/auth-servce";
 
 export const api = axios.create({
   baseURL: env.baseUrl,

@@ -16,3 +16,20 @@ export type Message = {
   createdAt: string; // ISO
   author: User;
 };
+
+export interface IGroup {
+  id: number;
+  nickname: string;
+  name: string;
+  authorId: number;
+  desc?: string;
+  image?: string;
+  banner?: string;
+  status: boolean;
+  createdAt: string;
+}
+
+export interface IRequestLogin {
+  name: string;
+  password: string;
+}
