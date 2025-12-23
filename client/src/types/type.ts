@@ -6,7 +6,11 @@ export interface IRequestRefresh {
 export type User = {
   id: number;
   name: string;
-  avatar?: string | null; // url
+  avatar?: string | null;
+  banner?: string | null;
+  desc?: string;
+  status: boolean;
+  createdAt: string; // с бэка обычно приходит ISO string
 };
 
 export type Message = {
@@ -21,7 +25,6 @@ export interface IGroup {
   id: number;
   nickname: string;
   name: string;
-  authorId: number;
   desc?: string;
   image?: string;
   banner?: string;
@@ -32,4 +35,19 @@ export interface IGroup {
 export interface IRequestLogin {
   name: string;
   password: string;
+}
+
+export interface IResponceLogin {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface IRequestRegister {
+  name: string;
+  password: string;
+}
+
+export interface IResponceRegister {
+  accessToken: string;
+  refreshToken: string;
 }

@@ -1,16 +1,23 @@
 import { ChatComponent } from "@/components/chat/chat";
 import { GroupCardComponent } from "@/components/chat/group/group";
-import { GroupData } from "@/data";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "react-router";
+import { useEffect, useState } from "react";
+import type { IGroup } from "@/types/type";
+import { findGroup } from "@/api/service/group/group-service";
 
-export function ChatPage() {
+export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [group, setGroup] = useState<IGroup[]>([]);
 
   function handleChat(nickname: string) {
     searchParams.set("chat", nickname);
     setSearchParams(searchParams);
   }
+
+  useEffect(() => {
+    findGroup().then((res) => setGroup(res));
+  }, []);
 
   const chatName = searchParams.get("chat");
   return (
@@ -23,7 +30,7 @@ export function ChatPage() {
             : "col-span-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
         )}
       >
-        {GroupData?.map((el, i) => (
+        {group?.map((el, i) => (
           <span key={i} onClick={() => handleChat(el.nickname)}>
             <GroupCardComponent group={el} />
           </span>

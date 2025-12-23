@@ -1,10 +1,15 @@
-import { Navigate, Outlet } from "react-router";
+import { Outlet } from "react-router";
 import { SidebarComponent } from "../sidebar/sidebar";
+import { useEffect } from "react";
+import { me } from "@/api/service/auth/auth-servce";
+import { useAuth } from "@/store/auth.store";
 
 export function HomeProtectedRoute() {
-  const isAuth = localStorage.getItem("accessToken");
+  const { setUser } = useAuth();
 
-  if (!isAuth) return <Navigate to="/login" replace />;
+  useEffect(() => {
+    me().then((res) => setUser(res));
+  }, []);
   return (
     <div className="flex">
       <SidebarComponent />

@@ -13,6 +13,7 @@ model User {
   password  String
   avatar    String?
   banner    String?
+  desc      String?
   status    Boolean  @default(true)
   createdAt DateTime @default(now())
 

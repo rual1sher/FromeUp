@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Message } from "@/types/type";
 
 type Props = {
@@ -11,10 +12,13 @@ export function MessageItem({ message, isOwn = false }: Props) {
   return (
     <div className={`flex gap-3 ${isOwn ? "justify-end" : "justify-start"}`}>
       {!isOwn && (
-        <img
-          src={message.author?.avatar || "anime-default-pfp-5.jpg"}
-          className="w-9 h-9 rounded-full"
-        />
+        <Avatar>
+          <AvatarImage
+            src={message.author?.avatar || "anime-default-pfp-5.jpg"}
+            alt={message.id}
+          />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
       )}
 
       <div className={`max-w-[70%]`}>
@@ -30,10 +34,13 @@ export function MessageItem({ message, isOwn = false }: Props) {
       </div>
 
       {isOwn && (
-        <img
-          src={message.author?.avatar || "anime-default-pfp-5.jpg"}
-          className="w-9 h-9 rounded-full"
-        />
+        <Avatar>
+          <AvatarImage
+            src={message.author?.avatar || "anime-default-pfp-5.jpg"}
+            alt={message.id}
+          />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
       )}
     </div>
   );

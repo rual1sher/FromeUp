@@ -20,7 +20,7 @@ api.interceptors.response.use(
 
     if (
       refreshToken &&
-      error.response?.data.message === "UNAUTHORIZED" &&
+      error.response?.data.message === "Неверный токен" &&
       originalConfig &&
       !originalConfig?.isRetry
     ) {
@@ -40,8 +40,8 @@ api.interceptors.response.use(
       return api.request(originalConfig);
     }
 
-    if (error.response?.data.message === "UNAUTHORIZED") {
-      window.location.href = "/";
+    if (error.response?.data.message === "Неверный токен") {
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);

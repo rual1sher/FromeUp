@@ -19,7 +19,7 @@ import { useState } from "react";
 import { login } from "@/api/service/auth/auth-servce";
 import { toast } from "sonner";
 
-export function LoginPage() {
+export default function LoginPage() {
   const navigator = useNavigate();
   const [isEye, setIsEye] = useState(false);
   const formSchema = z.object({
@@ -39,15 +39,16 @@ export function LoginPage() {
       .then((res) => [
         localStorage.setItem("accessToken", res.accessToken),
         localStorage.setItem("refreshToken", res.refreshToken),
+        form.reset(),
         navigator("/"),
       ])
       .catch((err) => {
+        form.reset();
         if (err.status === 404 || err.status === 400) {
-          toast.error("вы не авторизованы!", { richColors: true });
+          return toast.error("вы не авторизованы!", { richColors: true });
         }
+        toast.error("ошибка!", { richColors: true });
       });
-
-    form.reset();
   };
 
   return (
@@ -104,8 +105,8 @@ export function LoginPage() {
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <Fade delay={400}>
-                      <Slide direction="up" delay={600} triggerOnce>
+                    <Fade delay={300}>
+                      <Slide direction="up" delay={500} triggerOnce>
                         <FormItem className="space-y-0.5">
                           <FormLabel className="text-gray-200 lg:text-black">
                             Email
@@ -128,8 +129,8 @@ export function LoginPage() {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <Fade delay={400}>
-                      <Slide direction="up" delay={600} triggerOnce>
+                    <Fade delay={500}>
+                      <Slide direction="up" delay={700} triggerOnce>
                         <FormItem className="space-y-0.5">
                           <FormLabel className="text-gray-200 lg:text-black">
                             Пароль
@@ -159,36 +160,32 @@ export function LoginPage() {
                   )}
                 />
 
-                <Fade delay={500} triggerOnce>
-                  <Slide direction="up" delay={700} triggerOnce>
-                    <Button
-                      type="submit"
-                      variant="outline"
-                      className="w-full h-11 text-base font-medium mt-5 mb-2 bg-transparent text-gray-200 lg:text-black"
-                    >
-                      Войти
-                    </Button>
+                <Fade delay={700} triggerOnce>
+                  <Slide direction="up" delay={900} triggerOnce>
+                    <span>
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        className="w-full h-11 text-base font-medium mt-5 mb-2 bg-transparent text-gray-200 lg:text-black"
+                      >
+                        Войти
+                      </Button>
+
+                      <p className="text-sm text-center text-gray-200 lg:text-gray-600 dark:text-gray-40 ">
+                        Нет аккаунта?{" "}
+                        <span
+                          className="hover:underline cursor-pointer text-gray-200 lg:text-black"
+                          onClick={() => navigator("/register")}
+                        >
+                          Создать
+                        </span>
+                      </p>
+                    </span>
                   </Slide>
                 </Fade>
               </form>
             </Form>
           </div>
-
-          <Fade delay={500} triggerOnce>
-            <Slide direction="up" delay={700} triggerOnce>
-              <span>
-                <p className="text-sm text-center text-gray-200 lg:text-gray-600 dark:text-gray-40 ">
-                  Нет аккаунта?{" "}
-                  <span
-                    className="hover:underline cursor-pointer text-gray-200 lg:text-black"
-                    onClick={() => navigator("/register")}
-                  >
-                    Создать
-                  </span>
-                </p>
-              </span>
-            </Slide>
-          </Fade>
         </div>
       </div>
     </div>

@@ -2,26 +2,16 @@ import { useState } from "react";
 import { Paperclip, SendHorizontalIcon, Smile, Sticker } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageList } from "./message/message-list";
-import { messageData, userData } from "@/data/index";
 
 export function ChatComponent() {
-  const [messages, setMessages] = useState(messageData);
+  const [messages, setMessages] = useState([]);
 
   const [message, setMessage] = useState("");
 
   const handleSend = () => {
     if (!message.trim()) return;
 
-    setMessages((el) => [
-      ...el,
-      {
-        id: `m${Math.random() * 20}`,
-        authorId: 1,
-        text: message,
-        createdAt: new Date().toISOString(),
-        author: userData[0],
-      },
-    ]);
+    setMessages((el) => [...el]);
 
     setMessage("");
   };

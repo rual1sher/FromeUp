@@ -31,6 +31,11 @@ export class GroupController {
     return this.groupService.findMine(req.id, query);
   }
 
+  @Get('info/:id')
+  info(@Param('id') id: string) {
+    return this.groupService.info(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
     return this.groupService.update(+id, updateGroupDto);

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { PrismaService } from 'src/helpers/prisma/prisma.service';
@@ -6,10 +10,14 @@ import { ApiResponse } from 'src/helpers/apiRespons';
 import { IQuery } from 'src/helpers/type';
 import { Prisma } from '@prisma/client';
 import { Pagination } from 'src/helpers/pagination';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class GroupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private files: UploadService,
+  ) {}
 
   async create(dto: CreateGroupDto, authorId: number) {
     const { members, ...data } = dto;
@@ -19,8 +27,11 @@ export class GroupService {
     });
     if (groupCheck) throw new BadRequestException('nickname exists');
 
+    const image = this.files.saveFile(data.image);
+    const banner = this.files.saveFile(data.banner);
+
     const group = await this.prisma.group.create({
-      data: { ...data, authorId },
+      data: { ...data, image, banner, authorId },
     });
 
     const membersData = (
@@ -73,11 +84,57 @@ export class GroupService {
     return new ApiResponse(group, pagination);
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`;
+  async info(id: number) {
+    if (!id) throw new BadRequestException('ID Involid');
+
+    const group = await this.prisma.group.findUnique({
+      where: { id, status: true },
+      include: {
+        author: { omit: { password: true } },
+        members: { select: { userId: true } },
+      },
+    });
+
+    if (!group) throw new NotFoundException('group not found');
+
+    const members = await this.prisma.groupMember.findMany({
+      where: { id: { in: group.members.map((el) => el.userId) } },
+    });
+
+    return new ApiResponse({ ...group, members });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} group`;
+  async update(id: number, dto: UpdateGroupDto) {
+    const group = await this.prisma.group.findUnique({
+      where: { status: true, id },
+    });
+    if (!group) throw new NotFoundException('group not found');
+
+    const { members, ...data } = dto;
+
+    if (data?.nickname) {
+      const checkGroup = await this.prisma.group.findUnique({
+        where: { nickname: data.nickname },
+      });
+      if (checkGroup) throw new BadRequestException('nickname exists');
+    }
+
+    const updateGroup = await this.prisma.group.update({ where: { id }, data });
+    return new ApiResponse(updateGroup);
+  }
+
+  async remove(id: number) {
+    const group = await this.prisma.group.findUnique({
+      where: { id, status: true },
+    });
+
+    if (!group) throw new NotFoundException('group not found');
+
+    const data = await this.prisma.group.update({
+      where: { id },
+      data: { status: false },
+    });
+
+    return new ApiResponse(data);
   }
 }

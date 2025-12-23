@@ -4,11 +4,13 @@ import { Menu, MessageSquare, ListChecks, Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { useLocation, useNavigate } from "react-router";
 import { ExitModel } from "./modal/exit.model";
+import { useAuth } from "@/store/auth.store";
 
 export function SidebarComponent() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user: me } = useAuth();
 
   function isLocation(path: string[]) {
     return path.includes(location.pathname.split(" ").slice(-1)[0]);
@@ -17,7 +19,7 @@ export function SidebarComponent() {
   return (
     <div
       className={cn(
-        "absolute md:relative h-screen z-40 bg-white/60 backdrop-blur-xl dark:bg-black/20 border-r border-gray-100 dark:border-white/10 flex flex-col justify-between transition-all duration-500",
+        "absolute md:relative h-screen z-40 bg-white/60 backdrop-blur-xl dark:bg-black/20 md:border-r border-gray-100 dark:border-white/10 flex flex-col justify-between transition-all duration-500",
         open ? "w-full md:w-[280px]" : "w-0 md:w-20"
       )}
     >
@@ -38,7 +40,7 @@ export function SidebarComponent() {
         )}
       >
         <div className="px-4 py-2 rounded-xl bg-white/20 dark:bg-white/10 flex items-center justify-center shadow">
-          <p className="text-gray-600 text-sm">Alisher</p>
+          <p className="text-gray-600 text-sm">{me?.name || "N/A"}</p>
         </div>
       </div>
 
@@ -94,6 +96,7 @@ export function SidebarComponent() {
         <Button
           variant="outline"
           className="flex items-center overflow-hidden gap-3 p-3 rounded-xl hover:bg-white/20 text-gray-400 transition"
+          onClick={() => navigate("/profile")}
         >
           <User size={20} />
           {open && <span className="text-sm font-medium">Profile</span>}

@@ -1,11 +1,56 @@
+import { register } from "@/api/service/auth/auth-servce";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye } from "lucide-react";
+import { useState } from "react";
 import { Fade, Slide } from "react-awesome-reveal";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import { z } from "zod";
 
-export function RegisterPage() {
+export default function RegisterPage() {
   const navigator = useNavigate();
+  const [isEye, setIsEye] = useState(false);
+
+  const formSchema = z.object({
+    name: z.string().min(4, "Минимум 4 символов"),
+    password: z.string().min(6, "Минимум 6 символов"),
+  });
+
+  type RegisterFormValue = z.infer<typeof formSchema>;
+
+  const form = useForm<RegisterFormValue>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { name: "", password: "" },
+  });
+
+  const onSubmit = (data: RegisterFormValue) => {
+    register(data)
+      .then((res) => [
+        localStorage.setItem("accessToken", res.accessToken),
+        localStorage.setItem("refreshToken", res.refreshToken),
+        form.reset(),
+        navigator("/"),
+      ])
+      .catch((err) => {
+        form.reset();
+        if (err.response.data.message === "user exists") {
+          return toast.error("Имя пользователя уже существует!", {
+            richColors: true,
+          });
+        }
+        toast.error("ошибка!", { richColors: true });
+      });
+  };
 
   return (
     <div className="w-full h-screen flex items-center bg-white dark:bg-neutral-950">
@@ -49,71 +94,90 @@ export function RegisterPage() {
             </Slide>
           </Fade>
 
-          <div className="space-y-4">
-            {/* Name */}
-            <Fade delay={300}>
-              <Slide direction="up" delay={500} triggerOnce>
-                <div className="space-y-1">
-                  <Label className="text-gray-200 lg:text-black">Имя</Label>
-                  <Input
-                    placeholder="Ваше имя"
-                    className="h-11 text-gray-200 lg:text-black"
-                  />
-                </div>
-              </Slide>
-            </Fade>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <Fade delay={300}>
+                    <Slide direction="up" delay={500} triggerOnce>
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-gray-200 lg:text-black">
+                          Имя
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ваше имя"
+                            className="h-11 text-gray-200 lg:text-black"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </Slide>
+                  </Fade>
+                )}
+              />
 
-            {/* Email */}
-            <Fade delay={400}>
-              <Slide direction="up" delay={600} triggerOnce>
-                <div className="space-y-1">
-                  <Label className="text-gray-200 lg:text-black">Email</Label>
-                  <Input
-                    placeholder="you@example.com"
-                    className="h-11 text-gray-200 lg:text-black"
-                  />
-                </div>
-              </Slide>
-            </Fade>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <Fade delay={500}>
+                    <Slide direction="up" delay={700} triggerOnce>
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-gray-200 lg:text-black">
+                          Пароль
+                        </FormLabel>
+                        <FormControl>
+                          <span className="flex items-stretch">
+                            <Input
+                              type={isEye ? "string" : "password"}
+                              placeholder="Введите пароль"
+                              className="h-11 text-gray-200 lg:text-black"
+                              {...field}
+                            />
+                            <Button
+                              variant="outline"
+                              type="button"
+                              className="h-full"
+                              onClick={() => setIsEye(!isEye)}
+                            >
+                              <Eye />
+                            </Button>
+                          </span>
+                        </FormControl>
+                      </FormItem>
+                    </Slide>
+                  </Fade>
+                )}
+              />
 
-            {/* Password */}
-            <Fade delay={500}>
-              <Slide direction="up" delay={700} triggerOnce>
-                <div className="space-y-1">
-                  <Label className="text-gray-200 lg:text-black">Пароль</Label>
-                  <Input
-                    type="password"
-                    placeholder="Придумайте пароль"
-                    className="h-11 text-gray-200 lg:text-black"
-                  />
-                </div>
-              </Slide>
-            </Fade>
-          </div>
+              <Fade delay={600}>
+                <Slide direction="up" delay={800} triggerOnce>
+                  <span className="space-y-3 block">
+                    <Button
+                      type="submit"
+                      variant="outline"
+                      className="w-full h-11 text-base font-medium mt-5 bg-transparent text-gray-200 lg:text-black"
+                    >
+                      Создать аккаунт
+                    </Button>
 
-          {/* Actions */}
-          <Fade delay={600}>
-            <Slide direction="up" delay={800} triggerOnce>
-              <span className="space-y-3 block">
-                <Button
-                  variant="outline"
-                  className="w-full h-11 text-base font-medium bg-transparent text-gray-200 lg:text-black"
-                >
-                  Создать аккаунт
-                </Button>
-
-                <p className="text-sm text-center text-gray-200 lg:text-gray-600">
-                  Уже есть аккаунт?{" "}
-                  <span
-                    className="hover:underline cursor-pointer text-gray-200 lg:text-black"
-                    onClick={() => navigator("/login")}
-                  >
-                    Войти
+                    <p className="text-sm text-center text-gray-200 lg:text-gray-600">
+                      Уже есть аккаунт?{" "}
+                      <span
+                        className="hover:underline cursor-pointer text-gray-200 lg:text-black"
+                        onClick={() => navigator("/login")}
+                      >
+                        Войти
+                      </span>
+                    </p>
                   </span>
-                </p>
-              </span>
-            </Slide>
-          </Fade>
+                </Slide>
+              </Fade>
+            </form>
+          </Form>
         </div>
       </div>
     </div>
