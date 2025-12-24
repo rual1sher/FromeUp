@@ -68,6 +68,11 @@ export function MessageList({ messages, currentUserId }: Props) {
         ref={chatRef}
         className="space-y-4 p-4 overflow-auto scrolled h-full overflow-x-hidden"
       >
+        {!messages.length && (
+          <p className="text-gray-500 text-sm text-center mt-10">
+            Чат пока пуст. Напишите что-нибудь!
+          </p>
+        )}
         {messages.map((m) => {
           const isOwn = currentUserId === m.authorId;
           return (

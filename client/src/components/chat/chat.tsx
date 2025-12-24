@@ -20,18 +20,13 @@ export function ChatComponent() {
     <div className="w-full h-screen flex flex-col bg-gray-300 backdrop-blur-md">
       {/* CHAT AREA */}
       <div className="flex-1 overflow-y-auto space-y-4">
-        {!messages.length && (
-          <p className="text-gray-500 text-sm text-center mt-10">
-            Чат пока пуст. Напишите что-нибудь!
-          </p>
-        )}
         <MessageList messages={messages} currentUserId={1} />
       </div>
 
       <div className="border-t border-white/20 dark:border-white/10 bg-white dark:bg-black/30 backdrop-blur-md px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="p-0">
-            <label className="w-12 h-8 flex items-center justify-center cursor-pointer">
+        <div className="flex items-center gap-1 md:gap-3">
+          <Button variant="outline" className="p-0 rounded-md">
+            <label className="w-12 h-full flex items-center justify-center cursor-pointer">
               <Paperclip size={20} />
               <input type="file" className="hidden" />
             </label>
@@ -40,7 +35,7 @@ export function ChatComponent() {
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="flex-1 px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 backdrop-blur-sm border border-gray-200 focus:outline-none text-gray-900 dark:text-white"
+            className="flex-1 px-4 py-1.5 rounded-md bg-white/70 dark:bg-white/10 backdrop-blur-sm border border-gray-200 focus:outline-none text-gray-900 dark:text-white"
             placeholder="Написать сообщение..."
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -49,17 +44,23 @@ export function ChatComponent() {
               }
             }}
           />
-          <Button variant="outline" onClick={() => handleSend()}>
+          <Button
+            variant="outline"
+            className="rounded-md"
+            onClick={() => handleSend()}
+          >
             <SendHorizontalIcon size={20} />
           </Button>
 
-          <Button variant="outline">
-            <Smile size={20} />
-          </Button>
+          <span className="hidden md:inline-block space-x-3">
+            <Button variant="outline" className="rounded-md">
+              <Smile size={20} />
+            </Button>
 
-          <Button variant="outline">
-            <Sticker size={20} />
-          </Button>
+            <Button variant="outline" className="rounded-md">
+              <Sticker size={20} />
+            </Button>
+          </span>
         </div>
       </div>
     </div>
