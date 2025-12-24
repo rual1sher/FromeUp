@@ -19,9 +19,8 @@ export function ExitModel({ isText }: { isText: boolean }) {
       toast.success("Вы вышли из своей аккаунта");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-
-      navigate("/login");
     });
+    navigate("/login");
   };
 
   return (

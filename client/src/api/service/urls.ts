@@ -8,5 +8,7 @@ export const urls = {
   },
   group: {
     find: "group/mine",
+    create: "group",
   },
+  upload: "upload",
 };

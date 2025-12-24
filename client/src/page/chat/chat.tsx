@@ -3,12 +3,14 @@ import { GroupCardComponent } from "@/components/chat/group/group";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
-import type { IGroup } from "@/types/type";
+import type { IResponceGroup } from "@/types/type";
 import { findGroup } from "@/api/service/group/group-service";
+import { CreateGroupModal } from "@/components/chat/group/modal/create";
 
 export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [group, setGroup] = useState<IGroup[]>([]);
+  const [group, setGroup] = useState<IResponceGroup[]>([]);
+  const [open, setOpen] = useState(false);
 
   function handleChat(nickname: string) {
     searchParams.set("chat", nickname);
@@ -17,24 +19,28 @@ export default function ChatPage() {
 
   useEffect(() => {
     findGroup().then((res) => setGroup(res));
-  }, []);
+  }, [open]);
 
   const chatName = searchParams.get("chat");
   return (
     <div className="grid lg:grid-cols-6 w-full h-screen">
       <div
         className={cn(
-          "hidden w-full h-fit gap-2 py-3 overflow-auto px-2 lg:grid",
+          "hidden w-full h-fit gap-2 py-3 overflow-auto px-2 lg:grid relative",
           chatName
             ? "col-span-1"
             : "col-span-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
         )}
       >
-        {group?.map((el, i) => (
-          <span key={i} onClick={() => handleChat(el.nickname)}>
-            <GroupCardComponent group={el} />
-          </span>
-        ))}
+        {!group.length ? (
+          <CreateGroupModal open={open} setOpen={setOpen} />
+        ) : (
+          group?.map((el, i) => (
+            <span key={i} onClick={() => handleChat(el.nickname)}>
+              <GroupCardComponent group={el} />
+            </span>
+          ))
+        )}
       </div>
 
       {chatName && (

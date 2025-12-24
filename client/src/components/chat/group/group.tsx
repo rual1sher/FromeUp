@@ -1,6 +1,6 @@
 export function GroupCardComponent({ group }: { group: any }) {
   return (
-    <div className="flex items-center gap-4 p-4 cursor-pointer border border-gray-100 shadow-sm rounded-md">
+    <div className="flex lg:flex-col items-center gap-4 p-4 cursor-pointer border border-gray-100 shadow-sm rounded-md">
       <img
         src={group.image}
         alt={group.name}

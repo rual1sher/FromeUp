@@ -21,7 +21,16 @@ export type Message = {
   author: User;
 };
 
-export interface IGroup {
+export interface IRequestGroup {
+  nickname: string;
+  name: string;
+  desc: string;
+  image: string;
+  banner: string;
+  members: number[];
+}
+
+export interface IResponceGroup {
   id: number;
   nickname: string;
   name: string;

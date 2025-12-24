@@ -1,27 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import "./login-animation.css";
 import { Fade, Slide } from "react-awesome-reveal";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye } from "lucide-react";
-import { useState } from "react";
 import { login } from "@/api/service/auth/auth-servce";
 import { toast } from "sonner";
+import { FormItemInput } from "@/common/form/form-item";
 
 export default function LoginPage() {
   const navigator = useNavigate();
-  const [isEye, setIsEye] = useState(false);
   const formSchema = z.object({
     name: z.string().min(1, "Поле не должно быть пустым"),
     password: z.string().min(6, "Минимум 6 символов"),
@@ -83,7 +73,7 @@ export default function LoginPage() {
       <div className="absolute lg:relative w-full lg:w-1/2 flex items-center justify-center p-6 lg:bg-white h-full backdrop-blur-sm">
         <div className="w-full max-w-sm space-y-7 bg-black/50 lg:bg-transparent p-10 rounded-lg">
           <Fade delay={200}>
-            <Slide direction="up" delay={400} triggerOnce>
+            <Slide direction="up" delay={200} triggerOnce>
               <div>
                 <h2 className="text-3xl font-semibold text-gray-200 lg:text-gray-900">
                   Вход
@@ -99,69 +89,28 @@ export default function LoginPage() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="grid gap-2"
+                className="grid gap-4"
               >
-                <FormField
-                  control={form.control}
+                <FormItemInput
+                  form={form}
+                  label="Логин"
                   name="name"
-                  render={({ field }) => (
-                    <Fade delay={300}>
-                      <Slide direction="up" delay={500} triggerOnce>
-                        <FormItem className="space-y-0.5">
-                          <FormLabel className="text-gray-200 lg:text-black">
-                            Email
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="you@example.com"
-                              className="h-11 text-gray-200 lg:text-black"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      </Slide>
-                    </Fade>
-                  )}
+                  placeholder="Введите логин"
+                  delay={300}
+                  labelColor="rgb(200,200,200)"
                 />
 
-                <FormField
-                  control={form.control}
+                <FormItemInput
+                  form={form}
+                  label="Пароль"
                   name="password"
-                  render={({ field }) => (
-                    <Fade delay={500}>
-                      <Slide direction="up" delay={700} triggerOnce>
-                        <FormItem className="space-y-0.5">
-                          <FormLabel className="text-gray-200 lg:text-black">
-                            Пароль
-                          </FormLabel>
-                          <FormControl>
-                            <span className="flex items-stretch">
-                              <Input
-                                type={isEye ? "string" : "password"}
-                                placeholder="Введите пароль"
-                                className="h-11 text-gray-200 lg:text-black"
-                                {...field}
-                              />
-                              <Button
-                                variant="outline"
-                                type="button"
-                                className="h-full"
-                                onClick={() => setIsEye(!isEye)}
-                              >
-                                <Eye />
-                              </Button>
-                            </span>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      </Slide>
-                    </Fade>
-                  )}
+                  placeholder="Введите пароль"
+                  delay={400}
+                  labelColor="rgb(200,200,200)"
                 />
 
-                <Fade delay={700} triggerOnce>
-                  <Slide direction="up" delay={900} triggerOnce>
+                <Fade delay={500} triggerOnce>
+                  <Slide direction="up" delay={500} triggerOnce>
                     <span>
                       <Button
                         type="submit"

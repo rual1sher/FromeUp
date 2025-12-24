@@ -20,18 +20,19 @@ export class GroupService {
   ) {}
 
   async create(dto: CreateGroupDto, authorId: number) {
-    const { members, ...data } = dto;
+    const { members, ...dtoData } = dto;
+    const data = { ...dtoData };
 
     const groupCheck = await this.prisma.group.findUnique({
       where: { nickname: dto.nickname },
     });
     if (groupCheck) throw new BadRequestException('nickname exists');
 
-    const image = this.files.saveFile(data.image);
-    const banner = this.files.saveFile(data.banner);
+    if (data.image) data.image = this.files.saveFile(data.image);
+    if (data.banner) data.banner = this.files.saveFile(data.banner);
 
     const group = await this.prisma.group.create({
-      data: { ...data, image, banner, authorId },
+      data: { ...data, authorId },
     });
 
     const membersData = (
