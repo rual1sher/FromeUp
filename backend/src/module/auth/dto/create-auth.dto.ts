@@ -11,6 +11,10 @@ export class CreateAuthDto {
 
   @IsString()
   @MinLength(4)
+  nickname: string;
+
+  @IsString()
+  @MinLength(4)
   @IsOptional()
   avatar?: string;
 }

@@ -1,16 +1,13 @@
 import { ChatComponent } from "@/components/chat/chat";
-import { GroupCardComponent } from "@/components/chat/group/group";
+import { GroupCardComponent } from "@/components/group/group";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "react-router";
-import { useEffect, useState } from "react";
-import type { IResponceGroup } from "@/types/type";
-import { findGroup } from "@/api/service/group/group-service";
-import { CreateGroupModal } from "@/components/chat/group/modal/create";
+import { useEffect } from "react";
+import { useGroupStore } from "@/store/group.store";
 
 export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [group, setGroup] = useState<IResponceGroup[]>([]);
-  const [open, setOpen] = useState(false);
+  const { groups, loadGroups } = useGroupStore();
 
   function handleChat(nickname: string) {
     searchParams.set("chat", nickname);
@@ -18,10 +15,19 @@ export default function ChatPage() {
   }
 
   useEffect(() => {
-    findGroup().then((res) => setGroup(res));
-  }, [open]);
+    loadGroups();
+  }, []);
 
   const chatName = searchParams.get("chat");
+
+  if (!groups.length) {
+    return (
+      <p className="text-gray-500 text-sm text-center w-full mt-10 ">
+        Группы не найдены!
+      </p>
+    );
+  }
+
   return (
     <div className="grid lg:grid-cols-6 w-full h-screen">
       <div
@@ -32,15 +38,11 @@ export default function ChatPage() {
             : "col-span-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
         )}
       >
-        {!group.length ? (
-          <CreateGroupModal open={open} setOpen={setOpen} />
-        ) : (
-          group?.map((el, i) => (
-            <span key={i} onClick={() => handleChat(el.nickname)}>
-              <GroupCardComponent group={el} />
-            </span>
-          ))
-        )}
+        {groups?.map((el, i) => (
+          <span key={i} onClick={() => handleChat(el.nickname)}>
+            <GroupCardComponent group={el} />
+          </span>
+        ))}
       </div>
 
       {chatName && (

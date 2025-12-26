@@ -2,6 +2,7 @@ import type {
   IRequestLogin,
   IRequestRefresh,
   IRequestRegister,
+  IRequestUser,
   IResponceLogin,
   IResponceRegister,
   User,
@@ -36,4 +37,10 @@ export async function logout() {
 
   const { data } = await api.post<string>(urls.auth.logout, { token });
   return data;
+}
+
+export async function update(data: IRequestUser, id: string) {
+  const { data: res } = await api.patch(urls.auth.update(id), data);
+
+  return res;
 }

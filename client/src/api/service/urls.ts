@@ -5,6 +5,7 @@ export const urls = {
     logout: "auth/logout",
     register: "auth/signup",
     me: "auth/me",
+    update: (id: string) => `auth/update/${id}`,
   },
   group: {
     find: "group/mine",

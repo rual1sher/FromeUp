@@ -1,18 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { User } from "@/types/type";
 import { Fade, Slide } from "react-awesome-reveal";
 import { cn } from "@/lib/utils";
-import { Pen } from "lucide-react";
+import { UpdateProfileModal } from "./modal/update";
 
 interface Props {
   user?: User | null;
-  onEdit: () => void;
 }
 
-export function ProfileComponent({ user, onEdit }: Props) {
+export function ProfileComponent({ user }: Props) {
   return (
     <div className="w-full min-h-screen bg-background">
       {/* BANNER */}
@@ -24,6 +22,10 @@ export function ProfileComponent({ user, onEdit }: Props) {
         />
       </div>
 
+      <span className="absolute top-5 right-5">
+        <UpdateProfileModal defaultValues={user ?? null} />
+      </span>
+
       {/* CONTENT */}
       <div className="relative max-w-5xl mx-auto">
         <div className="p-5 bg-white/50 backdrop-blur-lg -mt-8 md:-mt-12 rounded-md">
@@ -34,7 +36,11 @@ export function ProfileComponent({ user, onEdit }: Props) {
               <Fade delay={200} triggerOnce>
                 <div className="relative shrink-0 mx-auto md:mx-0">
                   <Avatar className="w-30 h-30 md:w-36 md:h-36 border-4 border-background mx-auto shadow-xl">
-                    <AvatarImage src={user?.avatar ?? undefined} />
+                    <AvatarImage
+                      src={user?.avatar ?? undefined}
+                      alt="avatar"
+                      className="object-cover"
+                    />
                     <AvatarFallback className="text-xl md:text-3xl">
                       {user?.name[0].toUpperCase()}
                     </AvatarFallback>

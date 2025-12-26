@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const navigator = useNavigate();
 
   const formSchema = z.object({
+    nickname: z.string().min(4, "Минимум 4 символов"),
     name: z.string().min(4, "Минимум 4 символов"),
     password: z.string().min(6, "Минимум 6 символов"),
   });
@@ -21,7 +22,7 @@ export default function RegisterPage() {
 
   const form = useForm<RegisterFormValue>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", password: "" },
+    defaultValues: { name: "", password: "", nickname: "" },
   });
 
   const onSubmit = (data: RegisterFormValue) => {
@@ -33,7 +34,6 @@ export default function RegisterPage() {
         navigator("/"),
       ])
       .catch((err) => {
-        form.reset();
         if (err.response.data.message === "user exists") {
           return toast.error("Имя пользователя уже существует!", {
             richColors: true,
@@ -89,10 +89,19 @@ export default function RegisterPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
               <FormItemInput
                 form={form}
+                label="Никнейм"
+                name="nickname"
+                placeholder="Введите никнейм"
+                delay={300}
+                labelColor="rgb(200,200,200)"
+              />
+
+              <FormItemInput
+                form={form}
                 label="Логин"
                 name="name"
                 placeholder="Введите логин"
-                delay={300}
+                delay={400}
                 labelColor="rgb(200,200,200)"
               />
 
@@ -101,12 +110,12 @@ export default function RegisterPage() {
                 label="Пароль"
                 name="password"
                 placeholder="Введите пароль"
-                delay={400}
+                delay={500}
                 labelColor="rgb(200,200,200)"
               />
 
-              <Fade delay={500}>
-                <Slide direction="up" delay={500} triggerOnce>
+              <Fade delay={600}>
+                <Slide direction="up" delay={600} triggerOnce>
                   <span className="space-y-3 block">
                     <Button
                       type="submit"

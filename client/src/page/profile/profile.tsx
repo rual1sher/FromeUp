@@ -1,12 +1,8 @@
 import { ProfileComponent } from "@/components/profile/profile";
-import { useAuth } from "@/store/auth.store";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
-  const handlEdit = () => {
-    console.log("data");
-  };
-
-  return <ProfileComponent user={user} onEdit={handlEdit} />;
+  return <ProfileComponent user={user} />;
 }

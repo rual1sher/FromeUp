@@ -3,15 +3,37 @@ export interface IRequestRefresh {
   refreshToken: string;
 }
 
+export type PlanId = "gold" | "platinum";
+
+export interface Plan {
+  id: PlanId;
+  title: string;
+  price: number;
+  description: string;
+  popular?: boolean;
+  icon: any;
+  color: string;
+  features: string[];
+}
+
 export type User = {
   id: number;
   name: string;
+  nickname: string;
   avatar?: string | null;
   banner?: string | null;
   desc?: string;
   status: boolean;
   createdAt: string; // с бэка обычно приходит ISO string
 };
+
+export interface IRequestUser {
+  name: string;
+  nickname: string;
+  avatar?: string | null;
+  banner?: string | null;
+  desc?: string | null;
+}
 
 export type Message = {
   id: string;
@@ -42,7 +64,7 @@ export interface IResponceGroup {
 }
 
 export interface IRequestLogin {
-  name: string;
+  nickname: string;
   password: string;
 }
 

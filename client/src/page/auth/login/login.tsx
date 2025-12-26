@@ -13,7 +13,7 @@ import { FormItemInput } from "@/common/form/form-item";
 export default function LoginPage() {
   const navigator = useNavigate();
   const formSchema = z.object({
-    name: z.string().min(1, "Поле не должно быть пустым"),
+    nickname: z.string().min(4, "Минимум 4 символов"),
     password: z.string().min(6, "Минимум 6 символов"),
   });
 
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", password: "" },
+    defaultValues: { password: "", nickname: "" },
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -33,7 +33,6 @@ export default function LoginPage() {
         navigator("/"),
       ])
       .catch((err) => {
-        form.reset();
         if (err.status === 404 || err.status === 400) {
           return toast.error("вы не авторизованы!", { richColors: true });
         }
@@ -93,9 +92,9 @@ export default function LoginPage() {
               >
                 <FormItemInput
                   form={form}
-                  label="Логин"
-                  name="name"
-                  placeholder="Введите логин"
+                  label="Никнейм"
+                  name="nickname"
+                  placeholder="Введите никнейм"
                   delay={300}
                   labelColor="rgb(200,200,200)"
                 />
@@ -105,12 +104,12 @@ export default function LoginPage() {
                   label="Пароль"
                   name="password"
                   placeholder="Введите пароль"
-                  delay={400}
+                  delay={500}
                   labelColor="rgb(200,200,200)"
                 />
 
-                <Fade delay={500} triggerOnce>
-                  <Slide direction="up" delay={500} triggerOnce>
+                <Fade delay={600} triggerOnce>
+                  <Slide direction="up" delay={600} triggerOnce>
                     <span>
                       <Button
                         type="submit"

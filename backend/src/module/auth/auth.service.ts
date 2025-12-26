@@ -11,6 +11,7 @@ import { login } from './dto/login';
 import { IPayload } from 'src/helpers/type';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from 'src/helpers/prisma/prisma.service';
+import { UpdateDto } from './dto/update.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,11 @@ export class AuthService {
       where: { name: createUserDto.name, status: true },
     });
     if (user) throw new NotFoundException('user exists');
+
+    const checkNickname = await this.prisma.user.findUnique({
+      where: { nickname: createUserDto.nickname, status: true },
+    });
+    if (checkNickname) throw new BadRequestException('nickname exists');
 
     const newUser = await this.prisma.user.create({
       data: { ...data, password: hashSync(password, 10) },
@@ -38,9 +44,9 @@ export class AuthService {
     return new ApiResponse({ accessToken, refreshToken });
   }
 
-  async login({ password, name }: login) {
-    const user = await this.prisma.user.findFirst({
-      where: { name, status: true },
+  async login({ password, nickname }: login) {
+    const user = await this.prisma.user.findUnique({
+      where: { nickname, status: true },
     });
     if (!user) throw new NotFoundException('user not found');
 
@@ -115,5 +121,26 @@ export class AuthService {
       where: { id: { in: user.Tokens.map((el) => el.id) } },
     });
     return new ApiResponse('logout all');
+  }
+
+  async update(dto: UpdateDto, id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id, status: true },
+    });
+    if (!user) throw new NotFoundException('user not found');
+
+    if (dto?.nickname && dto?.nickname !== user?.nickname) {
+      const checkNickname = await this.prisma.user.findUnique({
+        where: { nickname: dto.nickname },
+      });
+      if (checkNickname) throw new BadRequestException('nickname exists');
+    }
+
+    const data = await this.prisma.user.update({
+      where: { id },
+      data: { ...dto },
+    });
+
+    return new ApiResponse(data);
   }
 }

@@ -3,6 +3,7 @@ import { LoginProtectedRoute } from "@/components/protected/login-protected";
 import { Route, Routes } from "react-router";
 import { lazy, Suspense } from "react";
 import LoadingPage from "@/page/loading/loading";
+import { SubscriptionsPage } from "@/page/subscriptions/subscriptions";
 
 const ChatPage = lazy(() => import("@/page/chat/chat"));
 const ProfilePage = lazy(() => import("@/page/profile/profile"));
@@ -23,6 +24,7 @@ export function RoutePage() {
           <Route path="/" element={<ChatPage />} />
           <Route path="/task" element={<ChatPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/subscriptions" element={<SubscriptionsPage />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
