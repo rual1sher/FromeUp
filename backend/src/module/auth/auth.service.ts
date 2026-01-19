@@ -12,23 +12,32 @@ import { IPayload } from 'src/helpers/type';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from 'src/helpers/prisma/prisma.service';
 import { UpdateDto } from './dto/update.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import { env } from 'src/config/env.config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailer: MailerService,
+  ) {}
 
   async signup(createUserDto: CreateAuthDto) {
     const { password, ...data } = createUserDto;
 
-    const user = await this.prisma.user.findFirst({
-      where: { name: createUserDto.name, status: true },
+    const checkNickname = await this.prisma.user.findFirst({
+      where: {
+        AND: [
+          { nickname: createUserDto.nickname },
+          { email: createUserDto.email },
+        ],
+        status: true,
+      },
     });
-    if (user) throw new NotFoundException('user exists');
 
-    const checkNickname = await this.prisma.user.findUnique({
-      where: { nickname: createUserDto.nickname, status: true },
-    });
-    if (checkNickname) throw new BadRequestException('nickname exists');
+    if (checkNickname) {
+      throw new BadRequestException('nickname and email exists');
+    }
 
     const newUser = await this.prisma.user.create({
       data: { ...data, password: hashSync(password, 10) },
@@ -44,9 +53,9 @@ export class AuthService {
     return new ApiResponse({ accessToken, refreshToken });
   }
 
-  async login({ password, nickname }: login) {
-    const user = await this.prisma.user.findUnique({
-      where: { nickname, status: true },
+  async login({ password, login }: login) {
+    const user = await this.prisma.user.findFirst({
+      where: { OR: [{ email: login }, { nickname: login }], status: true },
     });
     if (!user) throw new NotFoundException('user not found');
 
@@ -112,13 +121,15 @@ export class AuthService {
   async logoutAll({ id }: IPayload) {
     const user = await this.prisma.user.findUnique({
       where: { id, status: true },
-      include: { Tokens: true },
+      include: { tokens: true },
     });
 
-    if (!user.Tokens?.[0]) throw new NotFoundException('user token not found');
+    if (!user.tokens.length) {
+      throw new NotFoundException('user token not found');
+    }
 
     await this.prisma.tokens.deleteMany({
-      where: { id: { in: user.Tokens.map((el) => el.id) } },
+      where: { id: { in: user.tokens.map((el) => el.id) } },
     });
     return new ApiResponse('logout all');
   }
@@ -129,8 +140,8 @@ export class AuthService {
     });
     if (!user) throw new NotFoundException('user not found');
 
-    if (dto?.nickname && dto?.nickname !== user?.nickname) {
-      const checkNickname = await this.prisma.user.findUnique({
+    if (dto.nickname && dto.nickname !== user.nickname) {
+      const checkNickname = await this.prisma.user.findFirst({
         where: { nickname: dto.nickname },
       });
       if (checkNickname) throw new BadRequestException('nickname exists');
@@ -142,5 +153,29 @@ export class AuthService {
     });
 
     return new ApiResponse(data);
+  }
+
+  async verifyMessage({ id }: IPayload) {
+    const user = await this.prisma.user.findUnique({
+      where: { id, status: true },
+    });
+
+    if (!user && user.isVerify) {
+      throw new NotFoundException('user not found or verify');
+    }
+
+    const mailerHtml = `<h1>Подтверждение email</h1>
+    <p>Привет, ${user.nickname || 'друг'}!</p>
+    <p>Чтобы подтвердить почту — перейди по ссылке:</p>
+    <a href="https://rualisher.uz">Подтвердить email</a>`;
+
+    this.mailer.sendMail({
+      from: '"FromeUp" <kr4054658@gmail.com>',
+      to: user.email,
+      subject: 'Подтверждение email в FromeUp',
+      html: mailerHtml,
+    });
+
+    return new ApiResponse('send message to email');
   }
 }

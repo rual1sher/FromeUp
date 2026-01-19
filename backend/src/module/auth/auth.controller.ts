@@ -58,4 +58,10 @@ export class AuthController {
   update(@Body() dto: UpdateDto, @Param('id') id: string) {
     return this.userService.update(dto, +id);
   }
+
+  @Get('verify')
+  @UseGuards(AuthGuard)
+  verifyMessage(@Req() req: IPayload) {
+    return this.userService.verifyMessage(req);
+  }
 }

@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
@@ -7,36 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// user
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
+
   name      String
-  nickname  String   @unique()
+  nickname  String  
   password  String
+  email     String  
+
   avatar    String?
   banner    String?
   desc      String?
-  status    Boolean  @default(true)
-  createdAt DateTime @default(now())
 
-  GroupMember GroupMember[]
-  Message     Message[]
-  Tokens      Tokens[]
-  Group       Group[]
+  isVerify  Boolean   @default(false)
+  status    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  group       Group[]
+  groupMember GroupMember[]
+  message     Message[]
+  tokens      Tokens[]
+  task        Task[]
+  taskMember  TaskMember[]
+
+  @@unique([nickname, email])
 }
 
 model Tokens {
   id     Int    @id @default(autoincrement())
+
   token  String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   userId Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// message 
+model Message {
+  id      Int     @id @default(autoincrement())
+
+  content String
+
+  file    String?
+
+  status  Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  senderId Int
+  sender   User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  groupId Int?
+  group   Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  taskId Int?
+  task   Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+
+// group
 model Group {
   id Int @id @default(autoincrement())
 
   nickname String @unique
   name     String
-  authorId Int
 
   desc   String?
   image  String?
@@ -45,31 +79,66 @@ model Group {
   status    Boolean  @default(true)
   createdAt DateTime @default(now())
 
+  authorId Int
   author   User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  members  GroupMember[]
-  messages Message[]
+
+  members     GroupMember[]
+  messages    Message[]
 }
+
 
 model GroupMember {
   id        Int      @id @default(autoincrement())
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId   Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
+
   createdAt DateTime @default(now())
+
+  groupId   Int
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Message {
-  id      Int     @id @default(autoincrement())
-  content String
-  file    String?
-  status  Boolean @default(true)
+// task 
+model Task {
+  id            Int           @id   @default(autoincrement())
 
-  sender   User @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  senderId Int
+  title         String
 
-  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId Int
+  desc          String?
+  file          String?
 
-  createdAt DateTime @default(now())
+  status        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+
+  authorId      Int
+  author        User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  taskStatusId  Int
+  taskStatus    TaskStatus @relation(fields: [taskStatusId], references: [id], onDelete: Cascade)
+
+  message       Message[]
+  taskMember    TaskMember[]
+}
+
+model TaskMember {
+  id        Int           @id     @default(autoincrement())
+
+  createdAt DateTime      @default(now())
+
+  taskId    Int
+  task      Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  userId    Int
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TaskStatus {
+  id          Int         @id     @default(autoincrement())
+
+  name        String
+
+  createdAt   DateTime    @default(now())
+
+  task        Task[]
 }

@@ -11,4 +11,10 @@ export const env = {
     refreshSecret: process.env.REFRESH_TOKEN_SECRET,
     refreshExpire: process.env.REFRESH_TOKEN_EXPIRE,
   },
+  email: {
+    host: process.env.EMAIL_HOST,
+    user: process.env.EMAIL_USERNAME,
+    port: Number(process.env.EMAIL_PORT),
+    password: process.env.EMAIL_PASSWORD,
+  },
 };

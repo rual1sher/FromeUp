@@ -1,8 +1,9 @@
-import { IsString } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 export class login {
   @IsString()
-  nickname: string;
+  @MinLength(4)
+  login: string;
 
   @IsString()
   password: string;
