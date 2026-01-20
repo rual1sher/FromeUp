@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,13 +14,16 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from 'src/helpers/prisma/prisma.service';
 import { UpdateDto } from './dto/update.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { env } from 'src/config/env.config';
+import { mailerHtml } from './verify.message';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private mailer: MailerService,
+    @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 
   async signup(createUserDto: CreateAuthDto) {
@@ -164,18 +168,39 @@ export class AuthService {
       throw new NotFoundException('user not found or verify');
     }
 
-    const mailerHtml = `<h1>Подтверждение email</h1>
-    <p>Привет, ${user.nickname || 'друг'}!</p>
-    <p>Чтобы подтвердить почту — перейди по ссылке:</p>
-    <a href="https://rualisher.uz">Подтвердить email</a>`;
+    const verifyCode = Math.floor(Math.random() * 9000) + 1000;
+
+    await this.cache.set(`e.${user.email}`, verifyCode);
 
     this.mailer.sendMail({
       from: '"FromeUp" <kr4054658@gmail.com>',
       to: user.email,
       subject: 'Подтверждение email в FromeUp',
-      html: mailerHtml,
+      html: mailerHtml(user.nickname, verifyCode.toString()),
     });
 
     return new ApiResponse('send message to email');
+  }
+
+  async verifyAprove(code: string, { id }: IPayload) {
+    if (!code.length) return new BadRequestException('code is empty');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id, status: true },
+    });
+
+    if (!user && user.isVerify) {
+      throw new NotFoundException('user not found or verify');
+    }
+
+    const cechCode = await this.cache.get(`e.${user.email}`);
+
+    if (cechCode !== +code) {
+      throw new BadRequestException('code is wrong');
+    }
+
+    await this.prisma.user.update({ where: { id }, data: { isVerify: true } });
+
+    return new ApiResponse('verify aprove');
   }
 }

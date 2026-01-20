@@ -64,4 +64,10 @@ export class AuthController {
   verifyMessage(@Req() req: IPayload) {
     return this.userService.verifyMessage(req);
   }
+
+  @Post('aprove')
+  @UseGuards(AuthGuard)
+  verifyAprove(@Req() req: IPayload, @Body('code') code: string) {
+    return this.userService.verifyAprove(code, req);
+  }
 }
