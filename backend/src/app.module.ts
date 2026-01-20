@@ -4,9 +4,11 @@ import { UploadModule } from './module/upload/upload.module';
 import { PrismaModule } from './helpers/prisma/prisma.module';
 import { GroupModule } from './module/group/group.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CacheModule.register({ ttl: 1000 * 60 * 5, isGlobal: true }),
     UserModule,
     UploadModule,

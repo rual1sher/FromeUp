@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { env } from 'src/config/env.config';
+import { UploadService } from '../upload/upload.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { env } from 'src/config/env.config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, UploadService],
 })
 export class UserModule {}

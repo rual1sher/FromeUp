@@ -53,10 +53,10 @@ export class AuthController {
     return this.userService.logoutAll(req);
   }
 
-  @Patch('update/:id')
+  @Patch('update')
   @UseGuards(AuthGuard)
-  update(@Body() dto: UpdateDto, @Param('id') id: string) {
-    return this.userService.update(dto, +id);
+  update(@Body() dto: UpdateDto, @Req() req: IPayload) {
+    return this.userService.update(dto, req);
   }
 
   @Get('verify')

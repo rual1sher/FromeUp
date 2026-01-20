@@ -11,7 +11,7 @@ import { env } from 'src/config/env.config';
 
 @Injectable()
 export class UploadService {
-  @Cron(CronExpression.EVERY_DAY_AT_6AM)
+  @Cron(CronExpression.EVERY_12_HOURS)
   fileTempRemove() {
     const tempFile = path.join('uploads', 'temp');
     if (!fs.existsSync(tempFile)) return;

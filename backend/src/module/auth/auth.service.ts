@@ -17,6 +17,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { mailerHtml } from './verify.message';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private prisma: PrismaService,
     private mailer: MailerService,
     @Inject(CACHE_MANAGER) private cache: Cache,
+    private files: UploadService,
   ) {}
 
   async signup(createUserDto: CreateAuthDto) {
@@ -138,7 +140,7 @@ export class AuthService {
     return new ApiResponse('logout all');
   }
 
-  async update(dto: UpdateDto, id: number) {
+  async update(dto: UpdateDto, { id }: IPayload) {
     const user = await this.prisma.user.findUnique({
       where: { id, status: true },
     });
@@ -149,6 +151,16 @@ export class AuthService {
         where: { nickname: dto.nickname },
       });
       if (checkNickname) throw new BadRequestException('nickname exists');
+    }
+
+    if (dto.avatar) {
+      const newAvatar = this.files.saveFile(dto.avatar);
+      dto.avatar = newAvatar;
+    }
+
+    if (dto.banner) {
+      const newBanner = this.files.saveFile(dto.banner);
+      dto.banner = newBanner;
     }
 
     const data = await this.prisma.user.update({
